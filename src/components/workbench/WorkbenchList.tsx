@@ -5,6 +5,7 @@ import { CalendarIcon, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 import { Workbench } from '@/types';
+import { motion } from "framer-motion";
 
 type WorkbenchListProps = {
   className?: string;
@@ -58,35 +59,60 @@ const WorkbenchList: React.FC<WorkbenchListProps> = ({ className }) => {
     navigate(`/workbench/${workbenchId}`);
   };
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const item = {
+    hidden: { y: 20, opacity: 0 },
+    show: { y: 0, opacity: 1, transition: { duration: 0.4, ease: "easeOut" } }
+  };
+
   return (
-    <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", className)}>
-      {workbenches.map((workbench) => (
-        <button
+    <motion.div 
+      className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", className)}
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
+      {workbenches.map((workbench, index) => (
+        <motion.div
           key={workbench.id}
-          className="w-full text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary rounded-lg"
-          onClick={() => handleWorkbenchClick(workbench.id)}
+          variants={item}
+          custom={index}
         >
-          <Card className="h-full transition-all duration-200 hover:shadow-md group-hover:border-primary/40 group-focus-visible:border-primary/40">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">{workbench.name}</CardTitle>
-              <CardDescription className="line-clamp-1">{workbench.description}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-between items-center text-sm text-muted-foreground pt-2">
-                <div className="flex items-center gap-1">
-                  <CalendarIcon className="h-3.5 w-3.5" />
-                  <span>{formatDate(workbench.createdAt)}</span>
+          <button
+            className="w-full text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary rounded-lg"
+            onClick={() => handleWorkbenchClick(workbench.id)}
+          >
+            <Card className="h-full transition-all duration-300 hover:shadow-md hover:border-primary/40 group-hover:border-primary/40 group-focus-visible:border-primary/40">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg font-heading">{workbench.name}</CardTitle>
+                <CardDescription className="line-clamp-1 font-sans">{workbench.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex justify-between items-center text-sm text-muted-foreground pt-2">
+                  <div className="flex items-center gap-1">
+                    <CalendarIcon className="h-3.5 w-3.5" />
+                    <span className="font-sans">{formatDate(workbench.createdAt)}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-3.5 w-3.5" />
+                    <span className="font-sans">{workbench.snippetCount} snippets</span>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5" />
-                  <span>{workbench.snippetCount} snippets</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </button>
+              </CardContent>
+            </Card>
+          </button>
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 };
 
