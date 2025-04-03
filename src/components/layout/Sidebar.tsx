@@ -1,7 +1,14 @@
 
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { 
+  ArrowLeft, 
+  ArrowRight, 
+  LayoutDashboard, 
+  Plus, 
+  Settings, 
+  HelpCircle 
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type SidebarProps = {
@@ -10,6 +17,18 @@ type SidebarProps = {
 
 const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [activeItem, setActiveItem] = useState("dashboard");
+
+  const navItems = [
+    { id: "dashboard", label: "All Workbenches", icon: <LayoutDashboard size={18} /> },
+    { id: "create", label: "+ Create New", icon: <Plus size={18} /> },
+    { id: "settings", label: "Settings", icon: <Settings size={18} /> },
+    { id: "help", label: "Help", icon: <HelpCircle size={18} /> },
+  ];
+
+  const handleNavClick = (id: string) => {
+    setActiveItem(id);
+  };
 
   return (
     <aside
@@ -32,36 +51,28 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       </div>
       
       <div className="flex-1 overflow-auto p-4">
-        {collapsed ? (
-          <div className="flex flex-col items-center space-y-4">
-            <div className="w-8 h-8 rounded-md bg-sidebar-accent/50"></div>
-            <div className="w-8 h-8 rounded-md bg-sidebar-accent/50"></div>
-            <div className="w-8 h-8 rounded-md bg-sidebar-accent/50"></div>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <h2 className="text-sm font-medium text-sidebar-foreground/60">MAIN NAVIGATION</h2>
-              <div className="space-y-1">
-                <div className="bg-sidebar-accent/50 h-8 rounded-md px-3 flex items-center text-sm">Dashboard</div>
-                <div className="h-8 rounded-md px-3 flex items-center text-sm text-sidebar-foreground/80">Projects</div>
-                <div className="h-8 rounded-md px-3 flex items-center text-sm text-sidebar-foreground/80">Analytics</div>
-              </div>
-            </div>
-            
-            <div className="space-y-2">
-              <h2 className="text-sm font-medium text-sidebar-foreground/60">WORKSPACE</h2>
-              <div className="space-y-1">
-                <div className="h-8 rounded-md px-3 flex items-center text-sm text-sidebar-foreground/80">Settings</div>
-                <div className="h-8 rounded-md px-3 flex items-center text-sm text-sidebar-foreground/80">Members</div>
-              </div>
-            </div>
-          </div>
-        )}
+        <nav className="space-y-2">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => handleNavClick(item.id)}
+              className={cn(
+                "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                collapsed ? "justify-center" : "justify-start",
+                activeItem === item.id 
+                  ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium" 
+                  : "text-sidebar-foreground/80 hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+              )}
+            >
+              {item.icon}
+              {!collapsed && <span>{item.label}</span>}
+            </button>
+          ))}
+        </nav>
       </div>
       
       <div className="p-4 border-t border-sidebar-border">
-        {!collapsed && <p className="text-xs text-sidebar-foreground/60">[Sidebar Navigation Goes Here]</p>}
+        {!collapsed && <p className="text-xs text-sidebar-foreground/60">FlowState v1.0</p>}
       </div>
     </aside>
   );
