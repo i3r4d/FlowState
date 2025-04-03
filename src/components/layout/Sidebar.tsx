@@ -10,6 +10,7 @@ import {
   HelpCircle 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import CreateWorkbenchModal from '@/components/workbench/CreateWorkbenchModal';
 
 type SidebarProps = {
   className?: string;
@@ -18,6 +19,7 @@ type SidebarProps = {
 const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   const [collapsed, setCollapsed] = useState(false);
   const [activeItem, setActiveItem] = useState("dashboard");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const navItems = [
     { id: "dashboard", label: "All Workbenches", icon: <LayoutDashboard size={18} /> },
@@ -27,7 +29,16 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
   ];
 
   const handleNavClick = (id: string) => {
-    setActiveItem(id);
+    if (id === 'create') {
+      setIsCreateModalOpen(true);
+    } else {
+      setActiveItem(id);
+    }
+  };
+
+  const handleCreateWorkbench = (name: string) => {
+    console.log("Creating new workbench:", name);
+    // In a real app, this would dispatch an action or call an API
   };
 
   return (
@@ -74,6 +85,12 @@ const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       <div className="p-4 border-t border-sidebar-border">
         {!collapsed && <p className="text-xs text-sidebar-foreground/60">FlowState v1.0</p>}
       </div>
+
+      <CreateWorkbenchModal 
+        open={isCreateModalOpen}
+        onOpenChange={setIsCreateModalOpen}
+        onCreateWorkbench={handleCreateWorkbench}
+      />
     </aside>
   );
 };

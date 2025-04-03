@@ -3,20 +3,16 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { CalendarIcon, Clock } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-type Workbench = {
-  id: string;
-  name: string;
-  description: string;
-  createdAt: string;
-  snippetCount: number;
-};
+import { useNavigate } from "react-router-dom";
+import { Workbench } from '@/types';
 
 type WorkbenchListProps = {
   className?: string;
 };
 
 const WorkbenchList: React.FC<WorkbenchListProps> = ({ className }) => {
+  const navigate = useNavigate();
+  
   // Sample placeholder data
   const workbenches: Workbench[] = [
     {
@@ -58,13 +54,17 @@ const WorkbenchList: React.FC<WorkbenchListProps> = ({ className }) => {
     }).format(date);
   };
 
+  const handleWorkbenchClick = (workbenchId: string) => {
+    navigate(`/workbench/${workbenchId}`);
+  };
+
   return (
     <div className={cn("grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6", className)}>
       {workbenches.map((workbench) => (
         <button
           key={workbench.id}
           className="w-full text-left group focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary rounded-lg"
-          onClick={() => console.log(`Navigating to workbench: ${workbench.name}`)}
+          onClick={() => handleWorkbenchClick(workbench.id)}
         >
           <Card className="h-full transition-all duration-200 hover:shadow-md group-hover:border-primary/40 group-focus-visible:border-primary/40">
             <CardHeader className="pb-2">
